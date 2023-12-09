@@ -92,6 +92,7 @@ if __name__ == '__main__':
         "wide_deep_dnn_mha" : model_6_wide_deep(INPUTS_COLS, mha_layer = True),
         "cross_deep_dnn" : model_7_deep_cross(INPUTS_COLS),
         "cross_deep_mha_dnn" : model_7_deep_cross(INPUTS_COLS, mha_layer = True),
+        "cnn_dnn" : model_8_cnn(INPUTS_COLS),
     }
     model = model_map.get(ARG_MODEL_NAME_FULL)
 

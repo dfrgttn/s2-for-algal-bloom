@@ -340,3 +340,40 @@ def model_7_deep_cross(input_feature_names,
     outputs = layers.Dense(units=1, activation="sigmoid")(merged)
     model = keras.Model(inputs=inputs, outputs=outputs)
     return model
+
+def model_8_cnn(input_feature_names, input_dim=14,
+               num_filters=[64, 128],
+               kernel_sizes=[3, 3],
+               pool_sizes=[2, 2],
+               dense_units=[128, 32],
+               dropout_rate_0=0.2,
+               dropout_rate=0.2):
+
+    inputs = create_model_inputs(input_feature_names)
+    features = encode_inputs(inputs)
+    features = layers.concatenate(features)
+    features = layers.Dropout(dropout_rate_0)(features)
+
+    features = tf.expand_dims(features, axis=-1)
+
+    for i in range(len(num_filters)):
+        features = layers.Conv1D(filters=num_filters[i],
+                                 kernel_size=kernel_sizes[i],
+                                 padding="same")(features)
+        features = layers.BatchNormalization()(features)
+        features = layers.ReLU()(features)
+        features = layers.MaxPooling1D(pool_size=pool_sizes[i])(features)
+        features = layers.Dropout(dropout_rate)(features)
+
+    features = layers.Flatten()(features)
+    features = layers.Dropout(dropout_rate_0)(features)
+
+    for units in dense_units:
+        features = layers.Dense(units)(features)
+        features = layers.BatchNormalization()(features)
+        features = layers.ReLU()(features)
+        features = layers.Dropout(dropout_rate)(features)
+
+    outputs = layers.Dense(units=1, activation="sigmoid")(features)
+    model = keras.Model(inputs=inputs, outputs=outputs)
+    return model
